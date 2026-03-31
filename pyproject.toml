@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "WDumps-scraper"
+version = "0.0.1"
+authors = [
+  { name="Itamar Givon", email="itamar.givon@wikimedia.de" },
+  { name="Mona Thierse", email="mona.thierse@wikimedia.de" },
+]
+description = "A small example package"
+readme = "README.md"
+requires-python = ">=3.14"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "BSD-3-Clause"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "beautifulsoup4",
+    "requests",
+    "requests_cache",
+]
+
+[project.urls]
+Homepage = "https://github.com/wmde/WDumps-scraper"
+Issues = "https://github.com/wmde/WDumps-scraper/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wdumps_scraper"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.8",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []
