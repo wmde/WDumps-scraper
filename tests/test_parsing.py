@@ -1,6 +1,5 @@
 import pytest
 import wdumps_scraper.parsing
-from wdumps_scraper import parsing
 
 @pytest.fixture
 def html_last_id():
