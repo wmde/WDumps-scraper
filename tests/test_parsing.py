@@ -1,5 +1,7 @@
 import pytest
+
 import wdumps_scraper.parsing
+
 
 @pytest.fixture
 def html_last_id():
@@ -217,13 +219,15 @@ def html_content():
 <tr>
 <td>Sandbox</td>
 <td>
-<button class="upload" data-dump-id="5402" data-target="sandbox">Upload to Sandbox</button>
+<button class="upload" data-dump-id="5402" data-target="sandbox">Upload to Sandbox
+</button>
 </td>
 </tr>
 <tr>
 <td>Main</td>
 <td>
-<button class="upload" data-dump-id="5402" data-target="release">Upload to Release</button>
+<button class="upload" data-dump-id="5402" data-target="release">Upload to Release
+</button>
 </td>
 </tr>
 </table>
@@ -302,4 +306,9 @@ def test_extract_name(html_content: str) -> str:
     assert wdumps_scraper.parsing.extract_name(html_content) == "mythical-humanoid"
 
 def test_extract_filters(html_content: str) -> dict:
-    assert wdumps_scraper.parsing.extract_filters(html_content) == {'labels': 'yes', 'descriptions': 'no', 'aliases': 'no', 'sitelinks': 'no'}
+    assert wdumps_scraper.parsing.extract_filters(html_content) == {
+        "labels": "yes",
+        "descriptions": "no",
+        "aliases": "no",
+        "sitelinks": "no"
+    }

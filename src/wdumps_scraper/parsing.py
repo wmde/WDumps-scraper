@@ -1,5 +1,7 @@
-from bs4 import BeautifulSoup
 import json
+
+from bs4 import BeautifulSoup
+
 
 def extract_last_id(html_content: str) -> int:
   soup = BeautifulSoup(html_content, "html.parser")
