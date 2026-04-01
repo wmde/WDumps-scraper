@@ -11,8 +11,9 @@ class Scraper:
     
     def get(url: str, cache_duration: CacheDuration=CacheDuration.NO_CACHE) -> str:
         response = session.get(url, expire_after=cache_duration.value)
-        if response.status_code == 200:
+        try:
+            response.raise_for_status()
             return response.text
-        else:
-            return False
+        except requests.exceptions.HTTPError:
+            raise 
 
