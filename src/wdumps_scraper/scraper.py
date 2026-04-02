@@ -1,5 +1,6 @@
-from requests.exceptions import HTTPError
-from request_cache import CachedSession
+from enum import Enum
+
+from requests_cache import CachedSession
 
 
 class CacheDuration(Enum):
