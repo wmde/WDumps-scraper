@@ -1,5 +1,6 @@
 *.sqlite
 *.py~
+*.csv
 .idea/
 .venv/
 __pycache__/
