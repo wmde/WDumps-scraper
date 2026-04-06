@@ -1,6 +1,6 @@
 from enum import Enum
 
-from requests_cache import CachedSession
+import requests_cache
 
 
 class CacheDuration(Enum):
@@ -9,10 +9,11 @@ class CacheDuration(Enum):
     HIGH = None
 
 class Scraper:
-    def __init__(self, session: CachedSession) -> None:
+    def __init__(self, session: requests_cache.CachedSession) -> None:
         self.session = session
     
-    def get(self, url: str, cache_duration: CacheDuration=CacheDuration.NO_CACHE) -> str:
+    def get(self, url: str, cache_duration: CacheDuration=CacheDuration.NO_CACHE) \
+            -> str:
         response = self.session.get(url, expire_after=cache_duration.value)
         response.raise_for_status()
         return response.text

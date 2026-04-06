@@ -1,13 +1,10 @@
 from collections.abc import Callable
 from unittest.mock import MagicMock
 
-
 import pytest
 from pytest_mock import MockerFixture
 
-
 from wdumps_scraper.scraper import Scraper
-
 
 MOCK_HTML = """
 <p>Test Passed</p>
@@ -26,7 +23,8 @@ def make_mock_session(
         mock_response.status_code = status_code
 
         if status_code != 200:
-            mock_response.raise_for_status.side_effect = Exception(f"HTTP {status_code}")
+            mock_response.raise_for_status.side_effect = \
+                (Exception(f"HTTP {status_code}"))
 
         mock_session = mocker.MagicMock()
         mock_session.get.return_value = mock_response
