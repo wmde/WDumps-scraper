@@ -1,15 +1,10 @@
-from enum import Enum
+__all__ = ["Scraper"]
 
-import requests_cache
+from wdumps_scraper.cached_limiter_session import CachedLimiterSession, CacheDuration
 
-
-class CacheDuration(Enum):
-    NO_CACHE = 0
-    LOW = 7200
-    HIGH = None
 
 class Scraper:
-    def __init__(self, session: requests_cache.CachedSession) -> None:
+    def __init__(self, session: CachedLimiterSession) -> None:
         self.__session = session
     
     def get(
