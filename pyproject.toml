@@ -40,7 +40,16 @@ dev = [
     "pytest>=9.0.2",
     "pytest-mock",
     "ruff>=0.15.8",
+    "mypy>=1.0",
+    "types-requests",
 ]
+
+[tool.mypy]
+python_version = "3.14"
+
+[tool.mypy.overrides]
+module = ["requests_ratelimiter"]
+ignore_missing_imports = true
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
