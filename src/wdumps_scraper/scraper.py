@@ -10,11 +10,12 @@ class CacheDuration(Enum):
 
 class Scraper:
     def __init__(self, session: requests_cache.CachedSession) -> None:
-        self.session = session
+        self.__session = session
     
-    def get(self, url: str, cache_duration: CacheDuration=CacheDuration.NO_CACHE) \
-            -> str:
-        response = self.session.get(url, expire_after=cache_duration.value)
+    def get(
+            self, url: str, cache_duration: CacheDuration=CacheDuration.NO_CACHE
+    ) -> str:
+        response = self.__session.get(url, expire_after=cache_duration.value)
         response.raise_for_status()
         return response.text
 
