@@ -37,6 +37,7 @@ allow-direct-references = true
 [project.optional-dependencies]
 dev = [
     "pytest>=9.0.2",
+    "pytest-mock",
     "ruff>=0.15.8",
 ]
 

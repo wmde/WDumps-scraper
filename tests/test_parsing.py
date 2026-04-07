@@ -35,13 +35,13 @@ HTML_PREFORMATTED_TEXT = """
 """
 
 @pytest.mark.parametrize("html_table", [HTML_ONE_ROW_TABLE, HTML_TWO_ROW_TABLE])
-def test_extract_last_id(html_table) -> int:
+def test_extract_last_id(html_table) -> None:
     assert wdumps_scraper.parsing.extract_last_id(html_table) == 5446
 
-def test_extract_name() -> str:
+def test_extract_name() -> None:
     assert wdumps_scraper.parsing.extract_name(HTML_HEADLINE) == "mythical-humanoid"
 
-def test_extract_filters() -> dict:
+def test_extract_filters() -> None:
     assert wdumps_scraper.parsing.extract_filters(HTML_PREFORMATTED_TEXT) == {
         "labels": "yes",
         "descriptions": "no",
