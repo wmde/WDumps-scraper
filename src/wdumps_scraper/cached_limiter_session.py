@@ -13,8 +13,11 @@ class CacheDuration(Enum):
     LOW = 7200
     INDEFINITE = NEVER_EXPIRE
 
+
 class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
-    def __init__(self, *args: Any, user_agent: str | None =None, **kwargs: Any) -> None:
+    def __init__(
+        self, *args: Any, user_agent: str | None = None, **kwargs: Any
+    ) -> None:
         super().__init__(*args, **kwargs)
         if user_agent is not None:
             self.headers.update({"User-Agent": user_agent})

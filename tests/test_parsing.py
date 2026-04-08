@@ -34,17 +34,24 @@ HTML_PREFORMATTED_TEXT = """
 </p>
 """
 
+
 @pytest.mark.parametrize("html_table", [HTML_ONE_ROW_TABLE, HTML_TWO_ROW_TABLE])
 def test_extract_last_id(html_table) -> None:
     assert wdumps_scraper.parsing.extract_last_id(html_table) == 5446
 
+
 def test_extract_name() -> None:
     assert wdumps_scraper.parsing.extract_name(HTML_HEADLINE) == "mythical-humanoid"
+
+
+def test_extract_name_without_header() -> None:
+    assert wdumps_scraper.parsing.extract_name("<p>No header here</p>") == ""
+
 
 def test_extract_filters() -> None:
     assert wdumps_scraper.parsing.extract_filters(HTML_PREFORMATTED_TEXT) == {
         "labels": "yes",
         "descriptions": "no",
         "aliases": "no",
-        "sitelinks": "no"
+        "sitelinks": "no",
     }

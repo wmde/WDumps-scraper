@@ -19,3 +19,15 @@ The notebook generates a csv file that includes filter data in a human-readable 
 ```
 pip install -e ".[dev]"
 ```
+
+### Install the Pre-commit Hooks
+After installing the dev dependencies, activate the hooks so they run automatically on every commit:
+```
+pre-commit install
+```
+
+To run all hooks manually against the entire codebase:
+```
+pre-commit run --all-files
+```
+
