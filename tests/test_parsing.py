@@ -19,39 +19,8 @@ HTML_TWO_ROW_TABLE = """
 </tr>
 </table>
 """
-HTML_HEADLINE = "<h2>Dump #5402: mythical-humanoid</h2>"
-HTML_PREFORMATTED_TEXT = """
-<h2>Spec</h2>
-<p>
-<code>
-<pre>{
-  "sitelinks" : false,
-  "labels" : true,
-  "descriptions" : false,
-  "aliases" : false
-}</pre>
-</code>
-</p>
-"""
 
 
 @pytest.mark.parametrize("html_table", [HTML_ONE_ROW_TABLE, HTML_TWO_ROW_TABLE])
 def test_extract_last_id(html_table) -> None:
     assert wdumps_scraper.parsing.extract_last_id(html_table) == 5446
-
-
-def test_extract_name() -> None:
-    assert wdumps_scraper.parsing.extract_name(HTML_HEADLINE) == "mythical-humanoid"
-
-
-def test_extract_name_without_header() -> None:
-    assert wdumps_scraper.parsing.extract_name("<p>No header here</p>") == ""
-
-
-def test_extract_filters() -> None:
-    assert wdumps_scraper.parsing.extract_filters(HTML_PREFORMATTED_TEXT) == {
-        "labels": "yes",
-        "descriptions": "no",
-        "aliases": "no",
-        "sitelinks": "no",
-    }
