@@ -8,5 +8,7 @@ def render_includes(spec: dict[str, Any]) -> str:
 
 
 def render_languages(spec: dict[str, Any]) -> str:
-    dump_languages = [language for language in spec["languages"] if spec["languages"]]
+    dump_languages = spec.get("languages")
+    if dump_languages is None:
+        return ""
     return ", ".join(dump_languages)
