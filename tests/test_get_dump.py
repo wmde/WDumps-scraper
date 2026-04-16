@@ -13,7 +13,13 @@ MOCK_DUMP = {
         "id": 19,
         "title": "All authorship statements",
         "spec": json.dumps(
-            {"labels": True, "descriptions": False, "aliases": True, "sitelinks": True}
+            {
+                "languages": ["de", "en"],
+                "labels": True,
+                "descriptions": False,
+                "aliases": True,
+                "sitelinks": True,
+            }
         ),
     }
 }
@@ -48,6 +54,7 @@ def test_get_dump_returns_dict(make_mock_session: Callable[..., MagicMock]) -> N
     assert "descriptions" in result["spec"]
     assert "aliases" in result["spec"]
     assert "sitelinks" in result["spec"]
+    assert "languages" in result["spec"]
     assert result["url"] == "https://wdumps.toolforge.org/dump/1"
 
 
