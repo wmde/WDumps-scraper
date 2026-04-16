@@ -27,3 +27,11 @@ def _render_statement_filter(statement_filter: dict[str, Any]) -> str:
     flags = [k for k in ("qualifiers", "references") if statement_filter[k]]
     mode = "with " + " and ".join(flags) if flags else ""
     return " ".join(filter(None, [simple, rank, "statements", mode, "for", properties]))
+
+
+def render_entity_filters(spec: dict[str, Any]) -> str:
+    return "\n".join(_render_entity_filter(e) for e in spec["entities"])
+
+
+def _render_entity_filter(spec: dict[str, Any]) -> str:
+    return ""

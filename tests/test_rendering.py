@@ -58,6 +58,17 @@ JSON_SPEC_SIMPLE_STATEMENTS = {
 }
 JSON_SPEC_STATEMENTS_NONE: dict = {}
 
+JSON_SPEC_ENTITIES_ITEMS_ALL = {
+    "entities": [
+        {
+            "type": "item",
+            "properties": [
+                {"property": "", "rank": "all", "type": "anyvalue", "value": "null"}
+            ],
+        }
+    ],
+}
+
 
 def test_render_includes_all() -> None:
     assert (
@@ -120,3 +131,10 @@ def test_render_statement_filters_none() -> None:
         wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_STATEMENTS_NONE)
         == ""
     )
+
+
+# def test_render_entity_filters_all() -> None:
+#    assert (
+#        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
+#        == "Items where any property has any value (all ranks)"
+#    )
