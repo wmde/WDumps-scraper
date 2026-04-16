@@ -51,6 +51,12 @@ JSON_SPEC_STATEMENTS_MULTIPLE = {
 JSON_SPEC_STATEMENTS_NO_PROPERTIES = {
     "statements": [{"rank": "all", "references": True, "qualifiers": True}]
 }
+JSON_SPEC_SIMPLE_STATEMENTS = {
+    "statements": [
+        {"rank": "all", "references": True, "qualifiers": True, "simple": True}
+    ]
+}
+
 
 def test_render_includes_all() -> None:
     assert (
@@ -78,7 +84,7 @@ def test_render_languages_none() -> None:
 def test_render_statement_filters_all() -> None:
     assert (
         wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_STATEMENTS_ALL)
-        == "all ranks statements for all properties with qualifiers and references"
+        == "all statements with qualifiers and references for all properties"
     )
 
 
@@ -86,9 +92,9 @@ def test_render_statement_filters_multiple() -> None:
     assert wdumps_scraper.rendering.render_statement_filters(
         JSON_SPEC_STATEMENTS_MULTIPLE
     ) == (
-        "non-deprecated rank statements for all properties "
-        "with qualifiers and references\n"
-        "best rank statements for P106, P27 with qualifiers"
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for P106, P27"
     )
 
 
@@ -97,5 +103,12 @@ def test_render_statement_filters_no_properties() -> None:
         wdumps_scraper.rendering.render_statement_filters(
             JSON_SPEC_STATEMENTS_NO_PROPERTIES
         )
-        == "all ranks statements with qualifiers and references"
+        == "all statements with qualifiers and references for all properties"
+    )
+
+
+def test_render_statement_filters_simple() -> None:
+    assert (
+        wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_SIMPLE_STATEMENTS)
+        == "simple all statements with qualifiers and references for all properties"
     )
