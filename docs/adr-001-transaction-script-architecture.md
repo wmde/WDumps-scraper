@@ -6,13 +6,30 @@ Accepted
 
 ## Context
 
-This is a read-only scraper/ETL tool that fetches dump metadata from
+This is a read-only scraper/ETL (Extract, Transform, Load) tool that fetches dump metadata from
 [WDumper](https://wdumps.toolforge.org), enriches it with Wikidata labels, and outputs CSV rows
 for analysis in a Jupyter notebook. The domain logic is a single linear pipeline: fetch a list of
 dump IDs, fetch each dump's spec, resolve labels, render output columns.
 
-The project needs a clear architectural style that keeps the codebase simple, testable, and easy
-to follow.
+The pipeline calls three external services: the WDumper HTML page (to find the latest dump ID),
+the WDumper JSON API (to fetch individual dump specs), and the Wikidata Action API (to resolve
+property and entity IDs to human-readable labels). Each service has different failure modes,
+rate limits, and caching needs, so they cannot share a single fetch strategy.
+
+Label resolution is optional: the tool must produce valid CSV output without it. At the same time,
+the same Wikidata ID can appear across many dump specs, so labels must be resolved in a single
+batch rather than one API call per dump. These constraints make it important that the
+label-fetching concern is decoupled from the pipeline orchestration and can be swapped out — or
+omitted entirely — without changing the core scraping logic.
+
+The notebook is the primary user-facing interface, but it is a poor home for orchestration logic:
+notebook cells cannot be unit-tested, they blur the line between configuration and implementation,
+and they make the scraping logic hard to reuse or refactor independently. The architecture must
+keep the notebook as a thin configuration and output layer, with all pipeline logic living in a
+testable Python package.
+
+The project therefore needs a clear architectural style that satisfies all of these constraints
+while remaining simple to follow.
 
 ## Decision
 
@@ -42,6 +59,14 @@ WDumpsScraper (Facade)
 **Pure functions** in `rendering.py` handle stateless transformations (rendering filter specs to
 human-readable strings). No side effects, no dependencies on instance state.
 
+## Alternatives considered
+
+A richer domain model (e.g. domain objects for `Dump`, `Spec`, and `Label`) was ruled out because
+the pipeline has no business rules that act on these objects — they are fetched, transformed, and
+rendered in a straight line. The added complexity would not be justified. A fully
+service-oriented or event-driven approach was similarly rejected as over-engineering for a
+single-pipeline, read-only tool.
+
 ## Consequences
 
 **Benefits:**
@@ -50,6 +75,8 @@ human-readable strings). No side effects, no dependencies on instance state.
 - Easy to test: gateways can be mocked; pure functions tested in isolation with hand-crafted
   inputs; the Transaction Script tested end-to-end with stubbed collaborators.
 - Low ceremony: no framework, no dependency injection container.
+- The notebook is reduced to configuration and output cells; all testable logic lives in the
+  package, satisfying the constraint that orchestration must not live in the notebook.
 
 **Risks:**
 
