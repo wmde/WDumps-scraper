@@ -62,11 +62,47 @@ JSON_SPEC_ENTITIES_ITEMS_ALL = {
     "entities": [
         {
             "type": "item",
+            "properties": [{"property": "", "rank": "all", "value": None}],
+        }
+    ],
+}
+JSON_SPEC_ENTITIES_PROPERTIES_VALUE_CONSTRAINT = {
+    "entities": [
+        {
+            "type": "property",
             "properties": [
-                {"property": "", "rank": "all", "type": "anyvalue", "value": "null"}
+                {"property": "P31", "rank": "best-rank", "value": "Q107649491"}
             ],
         }
     ],
+}
+JSON_SPEC_ENTITIES_NONE: dict = {"entities": []}
+JSON_SPEC_ENTITIES_MULTIPLE_VALUES = {
+    "entities": [
+        {
+            "type": "item",
+            "properties": [
+                {"property": "P31", "rank": "best-rank", "value": "Q5"},
+                {"property": "P31", "rank": "non-deprecated", "value": "Q24533670"},
+            ],
+        }
+    ],
+}
+JSON_SPEC_ENTITIES_MULTIPLE_TYPES = {
+    "entities": [
+        {
+            "type": "item",
+            "properties": [
+                {"property": "P31", "rank": "best-rank", "value": "Q5"},
+            ],
+        },
+        {
+            "type": "property",
+            "properties": [
+                {"property": "P31", "rank": "non-deprecated", "value": None},
+            ],
+        },
+    ]
 }
 
 
@@ -138,3 +174,39 @@ def test_render_statement_filters_none() -> None:
 #        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
 #        == "Items where any property has any value (all ranks)"
 #    )
+def test_render_entity_filters_items_all() -> None:
+    assert (
+        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
+        == "Items where any property has any value (all)"
+    )
+
+
+def test_render_entity_filters_properties_value_constraint() -> None:
+    assert (
+        wdumps_scraper.rendering.render_entity_filters(
+            JSON_SPEC_ENTITIES_PROPERTIES_VALUE_CONSTRAINT
+        )
+        == "Properties where P31 is Q107649491 (best rank)"
+    )
+
+
+def test_render_entity_filters_none() -> None:
+    assert wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_NONE) == ""
+
+
+def test_render_entity_filters_multiple_values() -> None:
+    assert (
+        wdumps_scraper.rendering.render_entity_filters(
+            JSON_SPEC_ENTITIES_MULTIPLE_VALUES
+        )
+        == "Items where P31 is Q5 (best rank), P31 is Q24533670 (non deprecated)"
+    )
+
+
+def test_render_entity_filters_multiple_types() -> None:
+    assert wdumps_scraper.rendering.render_entity_filters(
+        JSON_SPEC_ENTITIES_MULTIPLE_TYPES
+    ) == (
+        "Items where P31 is Q5 (best rank)\n"
+        "Properties where P31 has any value (non deprecated)"
+    )

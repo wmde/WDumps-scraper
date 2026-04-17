@@ -33,5 +33,23 @@ def render_entity_filters(spec: dict[str, Any]) -> str:
     return "\n".join(_render_entity_filter(e) for e in spec["entities"])
 
 
-def _render_entity_filter(spec: dict[str, Any]) -> str:
-    return ""
+def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
+    entity_type = (
+        "Items where"
+        if entity_filter["type"] == "item"
+        else "Properties where"
+        if entity_filter["type"] == "property"
+        else ""
+    )
+    values = ", ".join(
+        _render_value_constraints(p) for p in entity_filter["properties"]
+    )
+    return " ".join(filter(None, [entity_type, values]))
+
+
+def _render_value_constraints(property_filter: dict[str, Any]) -> str:
+    property_id = property_filter.get("property") or "any property"
+    value_id = property_filter.get("value") if property_filter.get("value") else False
+    value = f"is {value_id}" if value_id else "has any value"
+    rank = property_filter["rank"].replace("-", " ")
+    return " ".join([property_id, value, f"({rank})"])
