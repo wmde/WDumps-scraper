@@ -16,11 +16,12 @@ the WDumper JSON API (to fetch individual dump specs), and the Wikidata Action A
 property and entity IDs to human-readable labels). Each service has different failure modes,
 rate limits, and caching needs, so they cannot share a single fetch strategy.
 
-Label resolution is optional: the tool must produce valid CSV output without it. At the same time,
-the same Wikidata ID can appear across many dump specs, so labels must be resolved in a single
-batch rather than one API call per dump. These constraints make it important that the
-label-fetching concern is decoupled from the pipeline orchestration and can be swapped out — or
-omitted entirely — without changing the core scraping logic.
+Label resolution can be optional: the tool should produce valid CSV output without it for ease
+of testing or if Wikidata is unavailable. At the same time, the same Wikidata ID can appear
+across many dump specs, so labels must be resolved in a single batch rather than one API call
+per dump. These constraints make it important that the label-fetching concern is decoupled from
+the pipeline orchestration and can be swapped out — or omitted entirely — without changing the
+core scraping logic.
 
 The notebook is the primary user-facing interface, but it is a poor home for orchestration logic:
 notebook cells cannot be unit-tested, they blur the line between configuration and implementation,
