@@ -49,14 +49,24 @@ def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
 
 
 def _render_value_constraints(property_filter: dict[str, Any]) -> str:
-    property_id = property_filter.get("property") or "any property"
+    property_id = property_filter.get("property") or ""
+    p = (
+        property_id.capitalize()
+        if re.match("(?i)^P", property_id)
+        else f"'{property_id}'"
+        if property_id
+        else "any property"
+    )
     value_id = property_filter.get("value") or ""
+    entity_value = True if property_filter.get("type") == "entityid" else False
     value = (
-        f"is {value_id}"
-        if bool(value_id) and re.match("^Q|^P", value_id)
-        else "has any value"
-        if not bool(value_id)
+        f"is {value_id.capitalize()}"
+        if re.match("(?i)^Q|^P", value_id)
         else f"is '{value_id}'"
+        if value_id
+        else "has any entity value"
+        if entity_value
+        else "has any value"
     )
     rank = property_filter["rank"].replace("-", " ")
-    return " ".join([property_id, value, f"({rank})"])
+    return " ".join([p, value, f"({rank})"])

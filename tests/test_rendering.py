@@ -62,16 +62,8 @@ JSON_SPEC_ENTITIES_ITEMS_ALL = {
     "entities": [
         {
             "type": "item",
-            "properties": [{"property": "", "rank": "all", "value": None}],
-        }
-    ],
-}
-JSON_SPEC_ENTITIES_PROPERTIES_VALUE_CONSTRAINT = {
-    "entities": [
-        {
-            "type": "property",
             "properties": [
-                {"property": "P31", "rank": "best-rank", "value": "Q107649491"}
+                {"property": "", "rank": "all", "type": "anyvalue", "value": None}
             ],
         }
     ],
@@ -82,8 +74,18 @@ JSON_SPEC_ENTITIES_MULTIPLE_VALUES = {
         {
             "type": "item",
             "properties": [
-                {"property": "P31", "rank": "best-rank", "value": "Q5"},
-                {"property": "P31", "rank": "non-deprecated", "value": "wd:Q901"},
+                {
+                    "property": "p31",
+                    "rank": "best-rank",
+                    "type": "entityid",
+                    "value": None,
+                },
+                {
+                    "property": "P31",
+                    "rank": "non-deprecated",
+                    "type": "entityid",
+                    "value": "wd:Q901",
+                },
             ],
         }
     ],
@@ -93,13 +95,17 @@ JSON_SPEC_ENTITIES_MULTIPLE_TYPES = {
         {
             "type": "item",
             "properties": [
-                {"property": "P31", "rank": "best-rank", "value": "Q5"},
+                {"property": "P31", "rank": "best-rank", "value": "q5"},
             ],
         },
         {
             "type": "property",
             "properties": [
-                {"property": "P31", "rank": "non-deprecated", "value": None},
+                {
+                    "property": "schema:isPartOf",
+                    "rank": "non-deprecated",
+                    "value": None,
+                },
             ],
         },
     ]
@@ -181,25 +187,16 @@ def test_render_entity_filters_items_all() -> None:
     )
 
 
-def test_render_entity_filters_properties_value_constraint() -> None:
-    assert (
-        wdumps_scraper.rendering.render_entity_filters(
-            JSON_SPEC_ENTITIES_PROPERTIES_VALUE_CONSTRAINT
-        )
-        == "Properties where P31 is Q107649491 (best rank)"
-    )
-
-
 def test_render_entity_filters_none() -> None:
     assert wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_NONE) == ""
 
 
 def test_render_entity_filters_multiple_values() -> None:
-    assert (
-        wdumps_scraper.rendering.render_entity_filters(
-            JSON_SPEC_ENTITIES_MULTIPLE_VALUES
-        )
-        == "Items where P31 is Q5 (best rank), P31 is 'wd:Q901' (non deprecated)"
+    assert wdumps_scraper.rendering.render_entity_filters(
+        JSON_SPEC_ENTITIES_MULTIPLE_VALUES
+    ) == (
+        "Items where P31 has any entity value (best rank), "
+        "P31 is 'wd:Q901' (non deprecated)"
     )
 
 
@@ -208,5 +205,5 @@ def test_render_entity_filters_multiple_types() -> None:
         JSON_SPEC_ENTITIES_MULTIPLE_TYPES
     ) == (
         "Items where P31 is Q5 (best rank)\n"
-        "Properties where P31 has any value (non deprecated)"
+        "Properties where 'schema:isPartOf' has any value (non deprecated)"
     )
