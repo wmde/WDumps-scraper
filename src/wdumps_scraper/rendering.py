@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 
@@ -49,7 +50,13 @@ def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
 
 def _render_value_constraints(property_filter: dict[str, Any]) -> str:
     property_id = property_filter.get("property") or "any property"
-    value_id = property_filter.get("value") if property_filter.get("value") else False
-    value = f"is {value_id}" if value_id else "has any value"
+    value_id = property_filter.get("value") or ""
+    value = (
+        f"is {value_id}"
+        if bool(value_id) and re.match("^Q|^P", value_id)
+        else "has any value"
+        if not bool(value_id)
+        else f"is '{value_id}'"
+    )
     rank = property_filter["rank"].replace("-", " ")
     return " ".join([property_id, value, f"({rank})"])

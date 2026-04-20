@@ -83,7 +83,7 @@ JSON_SPEC_ENTITIES_MULTIPLE_VALUES = {
             "type": "item",
             "properties": [
                 {"property": "P31", "rank": "best-rank", "value": "Q5"},
-                {"property": "P31", "rank": "non-deprecated", "value": "Q24533670"},
+                {"property": "P31", "rank": "non-deprecated", "value": "wd:Q901"},
             ],
         }
     ],
@@ -199,7 +199,7 @@ def test_render_entity_filters_multiple_values() -> None:
         wdumps_scraper.rendering.render_entity_filters(
             JSON_SPEC_ENTITIES_MULTIPLE_VALUES
         )
-        == "Items where P31 is Q5 (best rank), P31 is Q24533670 (non deprecated)"
+        == "Items where P31 is Q5 (best rank), P31 is 'wd:Q901' (non deprecated)"
     )
 
 
