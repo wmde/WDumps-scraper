@@ -13,10 +13,9 @@ def render_languages(spec: dict[str, Any]) -> str:
 
 
 def render_statement_filters(spec: dict[str, Any]) -> str:
+    statements = spec.get("statements")
     return (
-        "\n".join(_render_statement_filter(s) for s in spec["statements"])
-        if "statements" in spec
-        else ""
+        "\n".join(_render_statement_filter(s) for s in statements) if statements else ""
     )
 
 
