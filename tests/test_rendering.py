@@ -56,6 +56,7 @@ JSON_SPEC_SIMPLE_STATEMENTS = {
         {"rank": "all", "references": True, "qualifiers": True, "simple": True}
     ]
 }
+JSON_SPEC_STATEMENTS_NONE: dict = {}
 
 
 def test_render_includes_all() -> None:
@@ -111,4 +112,11 @@ def test_render_statement_filters_simple() -> None:
     assert (
         wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_SIMPLE_STATEMENTS)
         == "simple all statements with qualifiers and references for all properties"
+    )
+
+
+def test_render_statement_filters_none() -> None:
+    assert (
+        wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_STATEMENTS_NONE)
+        == ""
     )
