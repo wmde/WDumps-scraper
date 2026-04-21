@@ -9,9 +9,7 @@ def render_includes(spec: dict[str, Any]) -> str:
 
 def render_languages(spec: dict[str, Any]) -> str:
     dump_languages = spec.get("languages")
-    if dump_languages is None:
-        return ""
-    return ", ".join(dump_languages)
+    return ", ".join(dump_languages) if dump_languages else ""
 
 
 def render_statement_filters(spec: dict[str, Any]) -> str:
