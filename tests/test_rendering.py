@@ -176,13 +176,6 @@ def test_render_statement_filters_none() -> None:
     )
 
 
-# def test_render_entity_filters_all() -> None:
-#    assert (
-#        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
-#        == "Items where any property has any value (all ranks)"
-#    )
-
-
 def test_render_entity_filters_items_all() -> None:
     assert (
         wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)

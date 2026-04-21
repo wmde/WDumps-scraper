@@ -31,32 +31,22 @@ def _render_statement_filter(statement_filter: dict[str, Any]) -> str:
 
 
 def render_entity_filters(spec: dict[str, Any]) -> str:
-    return (
-        "\n".join(_render_entity_filter(e) for e in spec["entities"])
-        if "entities" in spec
-        else ""
-    )
+    entities = spec.get("entities")
+    return "\n".join(_render_entity_filter(e) for e in entities) if entities else ""
 
 
 def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
-    entity_type = (
-        "Items where"
-        if entity_filter["type"] == "item"
-        else "Properties where"
-        if entity_filter["type"] == "property"
-        else ""
-    )
-    values = ", ".join(
-        _render_value_constraints(p) for p in entity_filter["properties"]
-    )
-    return " ".join(filter(None, [entity_type, values]))
+    entity_type = "Items" if entity_filter["type"] == "item" else "Properties"
+    properties = entity_filter.get("properties") or []
+    values = ", ".join(_render_value_constraints(p) for p in properties)
+    return f"{entity_type} where {values}"
 
 
 def _render_value_constraints(property_filter: dict[str, Any]) -> str:
     property_id = property_filter.get("property") or ""
     p = (
         property_id.capitalize()
-        if re.match("(?i)^P", property_id)
+        if re.match("^P\d+$", property_id, re.IGNORECASE)
         else f"'{property_id}'"
         if property_id
         else "any property"
@@ -65,7 +55,7 @@ def _render_value_constraints(property_filter: dict[str, Any]) -> str:
     entity_value = True if property_filter.get("type") == "entityid" else False
     value = (
         f"is {value_id.capitalize()}"
-        if re.match("(?i)^Q|^P", value_id)
+        if re.match("^[Q|P]\d+$", value_id, re.IGNORECASE)
         else f"is '{value_id}'"
         if value_id
         else "has any entity value"
@@ -73,4 +63,4 @@ def _render_value_constraints(property_filter: dict[str, Any]) -> str:
         else "has any value"
     )
     rank = property_filter["rank"].replace("-", " ")
-    return " ".join([p, value, f"({rank})"])
+    return f"{p} {value} ({rank})"
