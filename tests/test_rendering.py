@@ -68,7 +68,8 @@ JSON_SPEC_ENTITIES_ITEMS_ALL = {
         }
     ],
 }
-JSON_SPEC_ENTITIES_NONE: dict = {"entities": []}
+JSON_SPEC_ENTITIES_EMPTY: dict = {"entities": []}
+JSON_SPEC_ENTITIES_NONE: dict = {}
 JSON_SPEC_ENTITIES_MULTIPLE_VALUES = {
     "entities": [
         {
@@ -184,6 +185,12 @@ def test_render_entity_filters_items_all() -> None:
     assert (
         wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
         == "Items where any property has any value (all)"
+    )
+
+
+def test_render_entity_filters_empty() -> None:
+    assert (
+        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_EMPTY) == ""
     )
 
 

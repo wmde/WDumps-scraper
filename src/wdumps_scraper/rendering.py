@@ -31,7 +31,11 @@ def _render_statement_filter(statement_filter: dict[str, Any]) -> str:
 
 
 def render_entity_filters(spec: dict[str, Any]) -> str:
-    return "\n".join(_render_entity_filter(e) for e in spec["entities"])
+    return (
+        "\n".join(_render_entity_filter(e) for e in spec["entities"])
+        if "entities" in spec
+        else ""
+    )
 
 
 def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
