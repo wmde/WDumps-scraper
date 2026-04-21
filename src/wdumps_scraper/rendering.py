@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 
@@ -27,3 +28,39 @@ def _render_statement_filter(statement_filter: dict[str, Any]) -> str:
     flags = [k for k in ("qualifiers", "references") if statement_filter[k]]
     mode = "with " + " and ".join(flags) if flags else ""
     return " ".join(filter(None, [simple, rank, "statements", mode, "for", properties]))
+
+
+def render_entity_filters(spec: dict[str, Any]) -> str:
+    entities = spec.get("entities")
+    return "\n".join(_render_entity_filter(e) for e in entities) if entities else ""
+
+
+def _render_entity_filter(entity_filter: dict[str, Any]) -> str:
+    entity_type = "Items" if entity_filter["type"] == "item" else "Properties"
+    properties = entity_filter.get("properties") or []
+    values = ", ".join(_render_value_constraints(p) for p in properties)
+    return f"{entity_type} where {values}"
+
+
+def _render_value_constraints(property_filter: dict[str, Any]) -> str:
+    property_id = property_filter.get("property") or ""
+    p = (
+        property_id.capitalize()
+        if re.match("^P\d+$", property_id, re.IGNORECASE)
+        else f"'{property_id}'"
+        if property_id
+        else "any property"
+    )
+    value_id = property_filter.get("value") or ""
+    entity_value = True if property_filter.get("type") == "entityid" else False
+    value = (
+        f"is {value_id.capitalize()}"
+        if re.match("^[Q|P]\d+$", value_id, re.IGNORECASE)
+        else f"is '{value_id}'"
+        if value_id
+        else "has any entity value"
+        if entity_value
+        else "has any value"
+    )
+    rank = property_filter["rank"].replace("-", " ")
+    return f"{p} {value} ({rank})"
