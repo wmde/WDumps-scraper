@@ -1,11 +1,11 @@
-__all__ = ["DumpsInfoLoader"]
-
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, NamedTuple, TypedDict
 
 import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
 from wdumps_scraper.wdumper_client import ClientError, WDumperClient
+
+__all__ = ["DumpsInfoLoader", "ClientError"]
 
 
 class DumpInfo(TypedDict):
