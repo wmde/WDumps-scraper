@@ -5,7 +5,7 @@ import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
 from wdumps_scraper.wdumper_client import ClientError, WDumperClient
 
-__all__ = ["DumpsInfoLoader", "ClientError"]
+__all__ = ["DumpsInfoLoader"]
 
 
 class DumpInfo(TypedDict):

@@ -3,8 +3,8 @@ from typing import Any, Callable
 import pytest
 from pytest_mock import MockerFixture
 
-from wdumps_scraper import WDumperClient
-from wdumps_scraper.dumps_info_loader import ClientError, DumpsInfoLoader
+from wdumps_scraper import ClientError, WDumperClient
+from wdumps_scraper.dumps_info_loader import DumpsInfoLoader
 
 ClientFactory = Callable[..., WDumperClient]
 
