@@ -1,5 +1,3 @@
-import json
-
 from requests import HTTPError
 
 from wdumps_scraper import ClientError
@@ -18,13 +16,12 @@ class WikidataClient:
         url = f"https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids={wd_id}&props=labels&languages=en&formatversion=2"
         response = self.__session.get(
             url,
-            # headers={"Accept": "application/json"},
             expire_after=cache_duration.value,
         )
         try:
             response.raise_for_status()
             data = response.json()
             label = data["entities"][wd_id]["labels"]["en"]["value"]
-            return label if label else wd_id
-        except (json.JSONDecodeError, HTTPError) as e:
+            return f"'{label}'" if label else wd_id
+        except HTTPError as e:
             raise ClientError(e)
