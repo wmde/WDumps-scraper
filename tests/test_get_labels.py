@@ -7,10 +7,8 @@ from requests import HTTPError
 
 from wdumps_scraper import ClientError, WikidataClient
 
-MOCK_ENTITIES = {
-    "entities": {"Q34969": {"labels": {"en": {"value": "Benjamin Franklin"}}}}
-}
-MOCK_ENTITIES_NO_LABEL = {"entities": {"Q34969": {"labels": {"en": {"value": ""}}}}}
+MOCK_ENTITIES = {"entities": {"Q1": {"labels": {"en": {"value": "Saturn"}}}}}
+MOCK_ENTITIES_NO_LABEL = {"entities": {"Q2": {"labels": {"en": {"value": ""}}}}}
 
 
 @pytest.fixture
@@ -32,25 +30,25 @@ def make_mock_session(mocker: MockerFixture) -> Callable[..., MagicMock]:
     return factory
 
 
-def test_get_label_returns_str(make_mock_session: Callable[..., MagicMock]) -> None:
+def test_get_labels_returns_str(make_mock_session: Callable[..., MagicMock]) -> None:
     session = make_mock_session(status_code=200, payload=MOCK_ENTITIES)
     wikidata_client = WikidataClient(session)
-    result = wikidata_client.get_label("Q34969")
-    assert result == "'Benjamin Franklin'"
+    result = wikidata_client.get_labels(["Q1"])
+    assert result == {"Q1": "Saturn"}
 
 
-def test_get_label_no_label(make_mock_session: Callable[..., MagicMock]) -> None:
+def test_get_labels_no_label(make_mock_session: Callable[..., MagicMock]) -> None:
     session = make_mock_session(status_code=200, payload=MOCK_ENTITIES_NO_LABEL)
     wikidata_client = WikidataClient(session)
-    result = wikidata_client.get_label("Q34969")
-    assert result == "Q34969"
+    result = wikidata_client.get_labels(["Q2"])
+    assert result == {}
 
 
-def test_get_label_raises_on_bad_status(
+def test_get_labels_raises_on_bad_status(
     make_mock_session: Callable[..., MagicMock],
 ) -> None:
     session = make_mock_session(status_code=400)
     wikidata_client = WikidataClient(session)
 
     with pytest.raises(ClientError):
-        wikidata_client.get_label("Q1")
+        wikidata_client.get_labels(["Q3"])
