@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, NamedTuple, TypedDict
 
 import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
