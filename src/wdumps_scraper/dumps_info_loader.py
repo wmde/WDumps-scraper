@@ -53,7 +53,6 @@ class DumpsInfoLoader:
         cache_duration = (
             CacheDuration.INDEFINITE if dump_id < last_id - 10 else CacheDuration.LOW
         )
-
         data = self.__client.get_dump(dump_id, cache_duration)
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
