@@ -12,10 +12,10 @@ class WikidataClient:
     def __init__(self, session: CachedLimiterSession) -> None:
         self.__session = session
 
-    def get_labels(
-        self, id: str, cache_duration: CacheDuration = CacheDuration.NO_CACHE
+    def get_label(
+        self, wd_id: str, cache_duration: CacheDuration = CacheDuration.NO_CACHE
     ) -> str:
-        url = f"https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids={id}&props=labels&languages=en&formatversion=2"
+        url = f"https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids={wd_id}&props=labels&languages=en&formatversion=2"
         response = self.__session.get(
             url,
             # headers={"Accept": "application/json"},
@@ -24,7 +24,7 @@ class WikidataClient:
         try:
             response.raise_for_status()
             data = response.json()
-            label = data["entities"][id]["labels"]["en"]["value"]
-            return label if label else id
+            label = data["entities"][wd_id]["labels"]["en"]["value"]
+            return label if label else wd_id
         except (json.JSONDecodeError, HTTPError) as e:
             raise ClientError(e)
