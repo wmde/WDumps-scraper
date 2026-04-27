@@ -1,5 +1,6 @@
 from wdumps_scraper import parsing, rendering
 from wdumps_scraper.cached_limiter_session import CachedLimiterSession, CacheDuration
+from wdumps_scraper.dumps_info_loader import DumpsInfoLoader
 from wdumps_scraper.scraper import Scraper
 from wdumps_scraper.wdumper_client import ClientError, WDumperClient
 
@@ -11,4 +12,5 @@ __all__ = [
     "Scraper",
     "WDumperClient",
     "ClientError",
+    "DumpsInfoLoader",
 ]
