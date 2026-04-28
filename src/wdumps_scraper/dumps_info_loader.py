@@ -51,7 +51,9 @@ class DumpsInfoLoader:
 
     def __scrape_dump(self, dump_id: int, last_id: int) -> DumpInfo:
         cache_duration = (
-            CacheDuration.INDEFINITE if dump_id < last_id - 10 else CacheDuration.LOW
+            CacheDuration.INDEFINITE
+            if dump_id < last_id - 10
+            else CacheDuration.TWO_HOURS
         )
         data = self.__client.get_dump(dump_id, cache_duration)
         includes = rendering.render_includes(data["spec"])
