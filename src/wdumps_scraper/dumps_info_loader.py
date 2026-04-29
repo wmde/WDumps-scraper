@@ -30,6 +30,7 @@ class DumpsInfoLoader:
 
     def load(self, last_id: int) -> ScrapeResult:
         dumps = []
+        struct_dumps = []
         skipped = []
 
         with ThreadPoolExecutor(max_workers=self.__max_workers) as executor:
@@ -47,15 +48,20 @@ class DumpsInfoLoader:
                 except ClientError as e:
                     skipped.append({"id": id_, "error": str(e)})
 
-        return ScrapeResult(dumps, skipped)
+        for i in range(0, len(dumps)):
+            struct_dumps.append(self.__render(dumps[i]))
 
-    def __scrape_dump(self, dump_id: int, last_id: int) -> DumpInfo:
+        return ScrapeResult(struct_dumps, skipped)
+
+    def __scrape_dump(self, dump_id: int, last_id: int) -> dict[str, Any]:
         cache_duration = (
             CacheDuration.INDEFINITE
             if dump_id < last_id - 10
             else CacheDuration.TWO_HOURS
         )
-        data = self.__client.get_dump(dump_id, cache_duration)
+        return self.__client.get_dump(dump_id, cache_duration)
+
+    def __render(self, data: dict[str, Any]) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
         statements = rendering.render_statement_filters(data["spec"])
