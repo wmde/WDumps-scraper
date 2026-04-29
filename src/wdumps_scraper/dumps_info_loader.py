@@ -1,3 +1,4 @@
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, NamedTuple, TypedDict
 
@@ -48,6 +49,8 @@ class DumpsInfoLoader:
                 except ClientError as e:
                     skipped.append({"id": id_, "error": str(e)})
 
+        # wd_ids = self.__extract_ids(dumps)
+
         for i in range(0, len(dumps)):
             struct_dumps.append(self.__render(dumps[i]))
 
@@ -60,6 +63,34 @@ class DumpsInfoLoader:
             else CacheDuration.TWO_HOURS
         )
         return self.__client.get_dump(dump_id, cache_duration)
+
+    def __extract_ids(self, dumps: list) -> set:
+        wd_ids: set = set()
+        pattern = "^[Q|P]\\d+$"
+
+        for i in range(0, len(dumps)):
+            entities = dumps[i].get("spec").get("entities") or []
+            for j in range(0, len(entities)):
+                properties = entities[j].get("properties")
+                for k in range(0, len(properties)):
+                    property_filters = [
+                        properties[k].get(x) for x in ["property", "value"]
+                    ]
+                    wd_ids.update(
+                        p
+                        for p in property_filters
+                        if property_filters and re.match(pattern, str(p), re.IGNORECASE)
+                    )
+            statements = dumps[i].get("spec").get("statements") or []
+            for j in range(0, len(statements)):
+                statement_filters = statements[j].get("properties") or []
+                wd_ids.update(
+                    s
+                    for s in statement_filters
+                    if statement_filters and re.match(pattern, str(s), re.IGNORECASE)
+                )
+
+        return wd_ids
 
     def __render(self, data: dict[str, Any]) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
