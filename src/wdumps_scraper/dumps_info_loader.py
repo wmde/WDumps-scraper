@@ -5,6 +5,7 @@ from typing import Any, NamedTuple, TypedDict
 import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
 from wdumps_scraper.wdumper_client import ClientError, WDumperClient
+from wdumps_scraper.wikidata_client import WikidataClient
 
 __all__ = ["DumpsInfoLoader"]
 
@@ -25,14 +26,21 @@ class ScrapeResult(NamedTuple):
 
 
 class DumpsInfoLoader:
-    def __init__(self, client: WDumperClient, max_workers: int = 10) -> None:
+    def __init__(
+        self,
+        client: WDumperClient,
+        wikidata_client: WikidataClient | None = None,
+        max_workers: int = 10,
+    ) -> None:
         self.__client = client
+        self.__wikidata_client = wikidata_client
         self.__max_workers = max_workers
 
     def load(self, last_id: int) -> ScrapeResult:
         dumps = []
         struct_dumps = []
         skipped = []
+        labels: dict = {}
 
         with ThreadPoolExecutor(max_workers=self.__max_workers) as executor:
             futures = {}
@@ -49,7 +57,11 @@ class DumpsInfoLoader:
                 except ClientError as e:
                     skipped.append({"id": id_, "error": str(e)})
 
-        # wd_ids = self.__extract_ids(dumps)
+        wd_ids = sorted(self.__extract_ids(dumps))
+
+        if self.__wikidata_client:
+            for i in range(0, len(wd_ids), 50):
+                labels.update(self.__wikidata_client.get_labels(wd_ids[i:50]))
 
         for i in range(0, len(dumps)):
             struct_dumps.append(self.__render(dumps[i]))

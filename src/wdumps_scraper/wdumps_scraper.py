@@ -35,7 +35,7 @@ class WDumpsScraper:
         self.__scraper = Scraper(self.__session)
         self.__dumper_client = WDumperClient(self.__session)
         self.__dumps_info_loader = DumpsInfoLoader(
-            self.__dumper_client, max_workers=self.__max_workers
+            client=self.__dumper_client, max_workers=self.__max_workers
         )
 
     def run(self) -> ScrapeResult:
