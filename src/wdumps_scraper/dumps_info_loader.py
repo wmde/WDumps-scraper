@@ -104,10 +104,12 @@ class DumpsInfoLoader:
 
         return wd_ids
 
-    def __render(self, data: dict[str, Any]) -> DumpInfo:
+    def __render(
+        self, data: dict[str, Any], labels: dict[str, str] | None = None
+    ) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
-        statements = rendering.render_statement_filters(data["spec"])
+        statements = rendering.render_statement_filters(data["spec"], labels)
         entities = rendering.render_entity_filters(data["spec"])
         return {
             "url": data["url"],
