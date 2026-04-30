@@ -4,10 +4,11 @@ from typing import Any, NamedTuple, TypedDict
 
 import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
-from wdumps_scraper.wdumper_client import ClientError, WDumperClient
+from wdumps_scraper.exceptions import ClientError
+from wdumps_scraper.wdumper_client import WDumperClient
 from wdumps_scraper.wikidata_client import WikidataClient
 
-__all__ = ["DumpsInfoLoader"]
+__all__ = ["DumpsInfoLoader", "ScrapeResult"]
 
 
 class DumpInfo(TypedDict):
@@ -56,12 +57,11 @@ class DumpsInfoLoader:
                 except ClientError as e:
                     skipped.append({"id": id_, "error": str(e)})
 
-        wd_ids = sorted(self.__extract_ids(dumps))
-
         if self.__wikidata_client:
+            ids = sorted(self.__extract_ids(dumps))
             labels: dict = {}
-            for i in range(0, len(wd_ids), 50):
-                labels.update(self.__wikidata_client.get_labels(wd_ids[i:50]))
+            for i in range(0, len(ids), 50):
+                labels.update(self.__wikidata_client.get_labels(ids[i:50]))
 
         for i in range(0, len(dumps)):
             struct_dumps.append(self.__render(dumps[i]))
@@ -76,36 +76,44 @@ class DumpsInfoLoader:
         )
         return self.__client.get_dump(dump_id, cache_duration)
 
-    def __extract_ids(self, dumps: list) -> set:
-        wd_ids: set = set()
+    @staticmethod
+    def __extract_ids(dumps: list) -> set:
+        ids: set = set()
         pattern = "^[Q|P]\\d+$"
 
         for i in range(0, len(dumps)):
             entities = dumps[i].get("spec").get("entities") or []
-            for j in range(0, len(entities)):
-                properties = entities[j].get("properties")
-                for k in range(0, len(properties)):
+            properties = [
+                entities[j].get("properties") for j in range(0, len(entities))
+            ]
+            for k in range(0, len(properties)):
+                for property_ in range(0, len(properties[k])):
                     property_filters = [
-                        properties[k].get(x) for x in ["property", "value"]
+                        properties[k][property_].get(x) for x in ["property", "value"]
                     ]
-                    wd_ids.update(
+                    # property_filters = map(
+                    # properties[k][l].get, ["property", "value"]
+                    # )
+                    ids.update(
                         p
                         for p in property_filters
                         if property_filters and re.match(pattern, str(p), re.IGNORECASE)
                     )
             statements = dumps[i].get("spec").get("statements") or []
-            for j in range(0, len(statements)):
-                statement_filters = statements[j].get("properties") or []
-                wd_ids.update(
-                    s
-                    for s in statement_filters
-                    if statement_filters and re.match(pattern, str(s), re.IGNORECASE)
-                )
+            statement_filters = [
+                statements[j].get("properties") for j in range(0, len(statements))
+            ] or []
+            ids.update(
+                s
+                for s in statement_filters
+                if statement_filters and re.match(pattern, str(s), re.IGNORECASE)
+            )
 
-        return wd_ids
+        return ids
 
+    @staticmethod
     def __render(
-        self, data: dict[str, Any], labels: dict[str, str] | None = None
+        data: dict[str, Any], labels: dict[str, str] | None = None
     ) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])

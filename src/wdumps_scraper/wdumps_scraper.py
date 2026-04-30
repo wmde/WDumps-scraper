@@ -1,13 +1,10 @@
 from requests_ratelimiter import SQLiteBucket
 
-from wdumps_scraper import (
-    CachedLimiterSession,
-    DumpsInfoLoader,
-    Scraper,
-    ScrapeResult,
-    WDumperClient,
-    parsing,
-)
+from wdumps_scraper import parsing
+from wdumps_scraper.cached_limiter_session import CachedLimiterSession
+from wdumps_scraper.dumps_info_loader import DumpsInfoLoader, ScrapeResult
+from wdumps_scraper.scraper import Scraper
+from wdumps_scraper.wdumper_client import WDumperClient
 from wdumps_scraper.wikidata_client import WikidataClient
 
 __all__ = ["WDumpsScraper"]
@@ -53,11 +50,11 @@ class WDumpsScraper:
                     "check_same_thread": False,
                 },
             )
-            self.__wd_client = WikidataClient(self.__wikidata_session)
+            self.__wikidata_client = WikidataClient(self.__wikidata_session)
         self.__dumps_info_loader = DumpsInfoLoader(
-            client=self.__dumper_client,
-            wikidata_client=self.__wd_client,
-            max_workers=self.__max_workers,
+            self.__dumper_client,
+            self.__wikidata_client,
+            self.__max_workers,
         )
 
     def run(self) -> ScrapeResult:
