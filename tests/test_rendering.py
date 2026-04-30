@@ -58,6 +58,9 @@ JSON_SPEC_SIMPLE_STATEMENTS = {
 }
 JSON_SPEC_STATEMENTS_NONE: dict = {}
 
+JSON_LABELS_MULTIPLE_EXIST = {"P106": "Venus", "P27": "Uranus"}
+JSON_LABELS_SINGLE_EXIST = {"P106": "Venus", "P5": "Jupiter"}
+
 JSON_SPEC_ENTITIES_ITEMS_ALL = {
     "entities": [
         {
@@ -146,6 +149,36 @@ def test_render_statement_filters_all() -> None:
 def test_render_statement_filters_multiple() -> None:
     assert wdumps_scraper.rendering.render_statement_filters(
         JSON_SPEC_STATEMENTS_MULTIPLE
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for P106, P27"
+    )
+
+
+def test_render_statement_filters_multiple_with_labels() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, JSON_LABELS_MULTIPLE_EXIST
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for Venus, Uranus"
+    )
+
+
+def test_render_statement_filters_single_with_labels() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, JSON_LABELS_SINGLE_EXIST
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for Venus, P27"
+    )
+
+
+def test_render_statement_filters_none_with_labels() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, {}
     ) == (
         "non deprecated statements with qualifiers and references "
         "for all properties\n"
