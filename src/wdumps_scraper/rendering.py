@@ -13,14 +13,20 @@ def render_languages(spec: dict[str, Any]) -> str:
     return ", ".join(dump_languages) if dump_languages else ""
 
 
-def render_statement_filters(spec: dict[str, Any]) -> str:
+def render_statement_filters(
+    spec: dict[str, Any], labels: dict[str, str] | None = None
+) -> str:
     statements = spec.get("statements")
     return (
-        "\n".join(_render_statement_filter(s) for s in statements) if statements else ""
+        "\n".join(_render_statement_filter(s, labels) for s in statements)
+        if statements
+        else ""
     )
 
 
-def _render_statement_filter(statement_filter: dict[str, Any]) -> str:
+def _render_statement_filter(
+    statement_filter: dict[str, Any], labels: dict[str, str] | None = None
+) -> str:
     simple = "simple" if statement_filter.get("simple") else ""
     rank = statement_filter["rank"].replace("-", " ")
     property_ids = statement_filter.get("properties") or []

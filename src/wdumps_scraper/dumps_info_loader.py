@@ -58,8 +58,13 @@ class DumpsInfoLoader:
 
         wd_ids = sorted(self.__extract_ids(dumps))
 
+        if self.__wikidata_client:
+            labels: dict = {}
+            for i in range(0, len(wd_ids), 50):
+                labels.update(self.__wikidata_client.get_labels(wd_ids[i:50]))
+
         for i in range(0, len(dumps)):
-            struct_dumps.append(self.__render(dumps[i], wd_ids))
+            struct_dumps.append(self.__render(dumps[i]))
 
         return ScrapeResult(struct_dumps, skipped)
 
@@ -99,11 +104,7 @@ class DumpsInfoLoader:
 
         return wd_ids
 
-    def __render(self, data: dict[str, Any], ids: list) -> DumpInfo:
-        if self.__wikidata_client:
-            labels: dict = {}
-            for i in range(0, len(ids), 50):
-                labels.update(self.__wikidata_client.get_labels(ids[i:50]))
+    def __render(self, data: dict[str, Any]) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
         statements = rendering.render_statement_filters(data["spec"])
