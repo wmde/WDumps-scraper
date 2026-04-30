@@ -30,7 +30,9 @@ def _render_statement_filter(
     simple = "simple" if statement_filter.get("simple") else ""
     rank = statement_filter["rank"].replace("-", " ")
     property_ids = statement_filter.get("properties") or []
-    property_ids = [labels[p] if labels and p in labels else p for p in property_ids]
+    property_ids = [
+        f"{labels[p]} ({p})" if labels and p in labels else p for p in property_ids
+    ]
     properties = ", ".join(property_ids) if property_ids else "all properties"
     flags = [k for k in ("qualifiers", "references") if statement_filter[k]]
     mode = "with " + " and ".join(flags) if flags else ""
@@ -62,7 +64,7 @@ def _render_value_constraints(
 ) -> str:
     property_id = property_filter.get("property") or ""
     p = (
-        labels[property_id]
+        f"{labels[property_id]} ({property_id})"
         if labels and property_id in labels
         else property_id.capitalize()
         if re.match("^P\\d+$", property_id, re.IGNORECASE)
@@ -73,7 +75,7 @@ def _render_value_constraints(
     value_id = property_filter.get("value") or ""
     entity_value = True if property_filter.get("type") == "entityid" else False
     value = (
-        labels[value_id]
+        f"{labels[value_id]} ({value_id})"
         if labels and value_id in labels
         else f"is {value_id.capitalize()}"
         if re.match("^[Q|P]\\d+$", value_id, re.IGNORECASE)

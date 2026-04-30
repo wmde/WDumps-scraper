@@ -41,6 +41,7 @@ class DumpsInfoLoader:
         dumps = []
         struct_dumps = []
         skipped = []
+        labels: dict = {}
 
         with ThreadPoolExecutor(max_workers=self.__max_workers) as executor:
             futures = {}
@@ -59,12 +60,11 @@ class DumpsInfoLoader:
 
         if self.__wikidata_client:
             ids = sorted(self.__extract_ids(dumps))
-            labels: dict = {}
             for i in range(0, len(ids), 50):
                 labels.update(self.__wikidata_client.get_labels(ids[i:50]))
 
         for i in range(0, len(dumps)):
-            struct_dumps.append(self.__render(dumps[i]))
+            struct_dumps.append(self.__render(dumps[i], labels))
 
         return ScrapeResult(struct_dumps, skipped)
 
@@ -118,7 +118,7 @@ class DumpsInfoLoader:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
         statements = rendering.render_statement_filters(data["spec"], labels)
-        entities = rendering.render_entity_filters(data["spec"])
+        entities = rendering.render_entity_filters(data["spec"], labels)
         return {
             "url": data["url"],
             "id": data["id"],

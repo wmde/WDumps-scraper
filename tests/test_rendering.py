@@ -162,7 +162,7 @@ def test_render_statement_filters_multiple_with_labels() -> None:
     ) == (
         "non deprecated statements with qualifiers and references "
         "for all properties\n"
-        "best rank statements with qualifiers for Venus, Uranus"
+        "best rank statements with qualifiers for Venus (P106), Uranus (P27)"
     )
 
 
@@ -172,7 +172,7 @@ def test_render_statement_filters_single_with_labels() -> None:
     ) == (
         "non deprecated statements with qualifiers and references "
         "for all properties\n"
-        "best rank statements with qualifiers for Venus, P27"
+        "best rank statements with qualifiers for Venus (P106), P27"
     )
 
 
