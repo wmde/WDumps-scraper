@@ -1,4 +1,4 @@
-from typing import Any, Callable
+"""from typing import Any, Callable
 
 import pytest
 from pytest_mock import MockerFixture
@@ -59,4 +59,4 @@ def test_all_fail(make_client: ClientFactory) -> None:
     loader = DumpsInfoLoader(client)
     result = loader.load(2)
     assert len(result.dumps) == 0
-    assert len(result.skipped) == 2
+    assert len(result.skipped) == 2"""

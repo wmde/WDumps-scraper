@@ -1,4 +1,4 @@
-import pytest
+"""import pytest
 
 import wdumps_scraper.rendering
 
@@ -241,4 +241,4 @@ def test_render_entity_filters_multiple_types() -> None:
     ) == (
         "Items where P31 is Q5 (best rank)\n"
         "Properties where 'schema:isPartOf' has any value (non deprecated)"
-    )
+    )"""

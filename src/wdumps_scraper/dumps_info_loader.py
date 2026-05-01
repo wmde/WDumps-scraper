@@ -5,8 +5,8 @@ from typing import Any, NamedTuple, TypedDict
 import wdumps_scraper.rendering as rendering
 from wdumps_scraper.cached_limiter_session import CacheDuration
 from wdumps_scraper.exceptions import ClientError
+from wdumps_scraper.label_fetcher import LabelFetcher
 from wdumps_scraper.wdumper_client import WDumperClient
-from wdumps_scraper.wikidata_client import WikidataClient
 
 __all__ = ["DumpsInfoLoader", "ScrapeResult"]
 
@@ -30,18 +30,17 @@ class DumpsInfoLoader:
     def __init__(
         self,
         client: WDumperClient,
-        wikidata_client: WikidataClient | None = None,
+        label_fetcher: LabelFetcher,
         max_workers: int = 10,
     ) -> None:
         self.__client = client
-        self.__wikidata_client = wikidata_client
+        self.__label_fetcher = label_fetcher
         self.__max_workers = max_workers
 
     def load(self, last_id: int) -> ScrapeResult:
         dumps = []
         struct_dumps = []
         skipped = []
-        labels: dict = {}
 
         with ThreadPoolExecutor(max_workers=self.__max_workers) as executor:
             futures = {}
@@ -58,10 +57,10 @@ class DumpsInfoLoader:
                 except ClientError as e:
                     skipped.append({"id": id_, "error": str(e)})
 
-        if self.__wikidata_client:
-            ids = sorted(self.__extract_ids(dumps))
-            for i in range(0, len(ids), 50):
-                labels.update(self.__wikidata_client.get_labels(ids[i:50]))
+        entity_ids = list(self.__extract_ids(dumps))
+        labels = self.__label_fetcher.fetch(entity_ids)
+        print(len(entity_ids))
+        print(len(labels))
 
         for i in range(0, len(dumps)):
             struct_dumps.append(self.__render(dumps[i], labels))
@@ -79,26 +78,23 @@ class DumpsInfoLoader:
     @staticmethod
     def __extract_ids(dumps: list) -> set:
         ids: set = set()
-        pattern = "^[Q|P]\\d+$"
 
         for i in range(0, len(dumps)):
             entities = dumps[i].get("spec").get("entities") or []
             properties = [
                 entities[j].get("properties") for j in range(0, len(entities))
             ]
-            for k in range(0, len(properties)):
-                for property_ in range(0, len(properties[k])):
-                    property_filters = [
-                        properties[k][property_].get(x) for x in ["property", "value"]
-                    ]
-                    # property_filters = map(
-                    # properties[k][l].get, ["property", "value"]
-                    # )
-                    ids.update(
-                        p
-                        for p in property_filters
-                        if property_filters and re.match(pattern, str(p), re.IGNORECASE)
-                    )
+            property_filters = [
+                properties[j][k].get(x)
+                for j in range(0, len(properties))
+                for k in range(0, len(properties[j]))
+                for x in ["property", "value"]
+            ]
+            ids.update(
+                p
+                for p in property_filters
+                if property_filters and re.match(r"^[Q|P]\d+$", str(p), re.IGNORECASE)
+            )
             statements = dumps[i].get("spec").get("statements") or []
             statement_filters = [
                 statements[j].get("properties") for j in range(0, len(statements))
@@ -106,15 +102,13 @@ class DumpsInfoLoader:
             ids.update(
                 s
                 for s in statement_filters
-                if statement_filters and re.match(pattern, str(s), re.IGNORECASE)
+                if statement_filters and re.match(r"^[Q|P]\d+$", str(s), re.IGNORECASE)
             )
 
         return ids
 
     @staticmethod
-    def __render(
-        data: dict[str, Any], labels: dict[str, str] | None = None
-    ) -> DumpInfo:
+    def __render(data: dict[str, Any], labels: dict[str, str]) -> DumpInfo:
         includes = rendering.render_includes(data["spec"])
         languages = rendering.render_languages(data["spec"])
         statements = rendering.render_statement_filters(data["spec"], labels)

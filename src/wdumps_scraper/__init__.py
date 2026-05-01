@@ -2,6 +2,11 @@ from wdumps_scraper import parsing, rendering
 from wdumps_scraper.cached_limiter_session import CachedLimiterSession, CacheDuration
 from wdumps_scraper.dumps_info_loader import DumpsInfoLoader, ScrapeResult
 from wdumps_scraper.exceptions import ClientError
+from wdumps_scraper.label_fetcher import (
+    BatchLabelFetcher,
+    LabelFetcher,
+    NullLabelFetcher,
+)
 from wdumps_scraper.scraper import Scraper
 from wdumps_scraper.wdumper_client import WDumperClient
 from wdumps_scraper.wdumps_scraper import WDumpsScraper
@@ -19,4 +24,7 @@ __all__ = [
     "WDumpsScraper",
     "ScrapeResult",
     "WikidataClient",
+    "LabelFetcher",
+    "NullLabelFetcher",
+    "BatchLabelFetcher",
 ]
