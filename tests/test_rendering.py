@@ -174,7 +174,7 @@ def test_render_statement_filters_multiple_with_labels() -> None:
     )
 
 
-def test_render_statement_filters_single_with_labels() -> None:
+def test_render_statement_filters_single_with_label() -> None:
     assert wdumps_scraper.rendering.render_statement_filters(
         JSON_SPEC_STATEMENTS_MULTIPLE, JSON_LABELS_SINGLE_EXIST
     ) == (
