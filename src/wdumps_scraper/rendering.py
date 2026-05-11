@@ -67,8 +67,8 @@ def _render_value_constraints(
 ) -> str:
     property_id = property_filter.get("property") or ""
     p = (
-        f"{labels[property_id]} ({property_id})"
-        if labels and property_id in labels
+        f"{labels[property_id.capitalize()]} ({property_id.capitalize()})"
+        if labels and property_id.capitalize() in labels
         else property_id.capitalize()
         if re.match(r"^P\d+$", property_id, re.IGNORECASE)
         else f"'{property_id}'"
@@ -78,8 +78,8 @@ def _render_value_constraints(
     value_id = property_filter.get("value") or ""
     entity_value = True if property_filter.get("type") == "entityid" else False
     value = (
-        f"is {labels[value_id]} ({value_id})"
-        if labels and value_id in labels
+        f"is {labels[value_id.capitalize()]} ({value_id.capitalize()})"
+        if labels and value_id.capitalize() in labels
         else f"is {value_id.capitalize()}"
         if re.match(r"^[Q|P]\d+$", value_id, re.IGNORECASE)
         else f"is '{value_id}'"
