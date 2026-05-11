@@ -4,12 +4,9 @@ from typing import Any
 from requests.exceptions import HTTPError
 
 from wdumps_scraper.cached_limiter_session import CachedLimiterSession, CacheDuration
+from wdumps_scraper.exceptions import ClientError
 
-__all__ = ["WDumperClient", "ClientError"]
-
-
-class ClientError(Exception):
-    pass
+__all__ = ["WDumperClient"]
 
 
 class WDumperClient:

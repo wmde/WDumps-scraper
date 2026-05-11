@@ -10,7 +10,8 @@ __all__ = ["CachedLimiterSession", "CacheDuration"]
 
 class CacheDuration(Enum):
     NO_CACHE = DO_NOT_CACHE
-    LOW = 7200
+    TWO_HOURS = 7200
+    TWO_WEEKS = 60 * 60 * 24 * 14
     INDEFINITE = NEVER_EXPIRE
 
 
