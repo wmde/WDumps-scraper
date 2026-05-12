@@ -60,8 +60,7 @@ class DumpsInfoLoader:
         entity_ids = list(self.__extract_ids(dumps))
         labels = self.__label_fetcher.fetch(entity_ids)
 
-        for i in range(0, len(dumps)):
-            struct_dumps.append(self.__render(dumps[i], labels))
+        struct_dumps = [self.__render(dumps[i], labels) for i in range(0, len(dumps))]
 
         return ScrapeResult(struct_dumps, skipped)
 
