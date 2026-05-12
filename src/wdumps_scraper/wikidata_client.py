@@ -43,7 +43,7 @@ class WikidataClient:
             return {
                 e_id: e.get("labels", {}).get("en", {}).get("value")
                 for e_id, e in data.get("entities", {}).items()
-                if e.get("labels") and len(e.get("labels")) > 0
+                if e.get("labels")
             }
         except (json.JSONDecodeError, HTTPError) as e:
             raise ClientError(e)

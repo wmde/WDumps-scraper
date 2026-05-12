@@ -59,8 +59,6 @@ class DumpsInfoLoader:
 
         entity_ids = list(self.__extract_ids(dumps))
         labels = self.__label_fetcher.fetch(entity_ids)
-        print(len(entity_ids))
-        print(len(labels))
 
         for i in range(0, len(dumps)):
             struct_dumps.append(self.__render(dumps[i], labels))
@@ -93,7 +91,7 @@ class DumpsInfoLoader:
             ids.update(
                 p
                 for p in property_filters
-                if property_filters and re.match(r"^[Q|P]\d+$", str(p), re.IGNORECASE)
+                if property_filters and re.match(r"^[QP]\d+$", str(p), re.IGNORECASE)
             )
             statements = dumps[i].get("spec").get("statements") or []
             statement_filters = [
@@ -102,7 +100,7 @@ class DumpsInfoLoader:
             ids.update(
                 s
                 for s in statement_filters
-                if statement_filters and re.match(r"^[Q|P]\d+$", str(s), re.IGNORECASE)
+                if statement_filters and re.match(r"^[QP]\d+$", str(s), re.IGNORECASE)
             )
 
         return ids

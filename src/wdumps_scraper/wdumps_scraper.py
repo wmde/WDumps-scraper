@@ -32,7 +32,6 @@ class WDumpsScraper:
         self.__session = self.__make_scraper_session()
         self.__scraper = Scraper(self.__session)
         self.__dumper_client = WDumperClient(self.__session)
-        self.__wikidata_client = WikidataClient(self.__make_wikidata_session())
         self.__label_fetcher = self.__make_label_fetcher()
         self.__dumps_info_loader = DumpsInfoLoader(
             self.__dumper_client,
@@ -72,5 +71,6 @@ class WDumpsScraper:
 
     def __make_label_fetcher(self) -> LabelFetcher:
         if self.__label_resolution:
-            return BatchLabelFetcher(self.__wikidata_client)
+            client = WikidataClient(self.__make_wikidata_session())
+            return BatchLabelFetcher(client)
         return NullLabelFetcher()
