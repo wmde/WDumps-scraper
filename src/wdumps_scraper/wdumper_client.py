@@ -15,7 +15,7 @@ class WDumperClient:
 
     def get_dump(
         self, dump_id: int, cache_duration: CacheDuration = CacheDuration.NO_CACHE
-    ) -> dict[str, Any]:
+    ) -> dict[str, dict[str, Any]]:
         url = f"https://wdumps.toolforge.org/dump/{dump_id}"
         response = self.__session.get(
             url,

@@ -24,7 +24,7 @@ class WikidataClient:
             url=self.__base_url,
             params={"action": action, "format": "json", "formatversion": 2, **params},
             headers={"Accept": "application/json"},
-            expire_after=cache_duration,
+            expire_after=cache_duration.value,
         )
 
     def get_labels(self, wd_ids: list) -> dict[str, str]:
@@ -43,7 +43,7 @@ class WikidataClient:
             return {
                 e_id: e.get("labels", {}).get("en", {}).get("value")
                 for e_id, e in data.get("entities", {}).items()
-                if len(e.get("labels")) > 0
+                if e.get("labels")
             }
         except (json.JSONDecodeError, HTTPError) as e:
             raise ClientError(e)

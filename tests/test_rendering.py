@@ -41,7 +41,7 @@ JSON_SPEC_STATEMENTS_MULTIPLE = {
             "qualifiers": True,
         },
         {
-            "properties": ["P106", "P27"],
+            "properties": ["P31", "P279"],
             "rank": "best-rank",
             "references": False,
             "qualifiers": True,
@@ -57,6 +57,14 @@ JSON_SPEC_SIMPLE_STATEMENTS = {
     ]
 }
 JSON_SPEC_STATEMENTS_NONE: dict = {}
+
+JSON_LABELS_MULTIPLE_EXIST = {
+    "Q106": "Uranus",
+    "P31": "instance of",
+    "P279": "subclass of",
+}
+JSON_LABELS_SINGLE_EXIST = {"P31": "instance of"}
+JSON_NO_LABELS: dict = {}
 
 JSON_SPEC_ENTITIES_ITEMS_ALL = {
     "entities": [
@@ -82,7 +90,7 @@ JSON_SPEC_ENTITIES_MULTIPLE_VALUES = {
                     "value": None,
                 },
                 {
-                    "property": "P31",
+                    "property": "P279",
                     "rank": "non-deprecated",
                     "type": "entityid",
                     "value": "wd:Q901",
@@ -96,7 +104,7 @@ JSON_SPEC_ENTITIES_MULTIPLE_TYPES = {
         {
             "type": "item",
             "properties": [
-                {"property": "P31", "rank": "best-rank", "value": "q5"},
+                {"property": "P31", "rank": "best-rank", "value": "q106"},
             ],
         },
         {
@@ -136,76 +144,128 @@ def test_render_languages_none() -> None:
     assert wdumps_scraper.rendering.render_languages(JSON_SPEC_NO_LANGUAGES) == ""
 
 
-def test_render_statement_filters_all() -> None:
-    assert (
-        wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_STATEMENTS_ALL)
-        == "all statements with qualifiers and references for all properties"
-    )
-
-
-def test_render_statement_filters_multiple() -> None:
-    assert wdumps_scraper.rendering.render_statement_filters(
-        JSON_SPEC_STATEMENTS_MULTIPLE
-    ) == (
-        "non deprecated statements with qualifiers and references "
-        "for all properties\n"
-        "best rank statements with qualifiers for P106, P27"
-    )
-
-
-def test_render_statement_filters_no_properties() -> None:
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_statement_filters_all(json_labels) -> None:
     assert (
         wdumps_scraper.rendering.render_statement_filters(
-            JSON_SPEC_STATEMENTS_NO_PROPERTIES
+            JSON_SPEC_STATEMENTS_ALL, json_labels
         )
         == "all statements with qualifiers and references for all properties"
     )
 
 
-def test_render_statement_filters_simple() -> None:
+def test_render_statement_filters_multiple_no_labels() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, JSON_NO_LABELS
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for P31, P279"
+    )
+
+
+def test_render_statement_filters_multiple_with_labels() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, JSON_LABELS_MULTIPLE_EXIST
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for instance of (P31), subclass of (P279)"
+    )
+
+
+def test_render_statement_filters_single_with_label() -> None:
+    assert wdumps_scraper.rendering.render_statement_filters(
+        JSON_SPEC_STATEMENTS_MULTIPLE, JSON_LABELS_SINGLE_EXIST
+    ) == (
+        "non deprecated statements with qualifiers and references "
+        "for all properties\n"
+        "best rank statements with qualifiers for instance of (P31), P279"
+    )
+
+
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_statement_filters_no_properties(json_labels) -> None:
     assert (
-        wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_SIMPLE_STATEMENTS)
+        wdumps_scraper.rendering.render_statement_filters(
+            JSON_SPEC_STATEMENTS_NO_PROPERTIES, json_labels
+        )
+        == "all statements with qualifiers and references for all properties"
+    )
+
+
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_statement_filters_simple(json_labels) -> None:
+    assert (
+        wdumps_scraper.rendering.render_statement_filters(
+            JSON_SPEC_SIMPLE_STATEMENTS, json_labels
+        )
         == "simple all statements with qualifiers and references for all properties"
     )
 
 
-def test_render_statement_filters_none() -> None:
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_statement_filters_none(json_labels) -> None:
     assert (
-        wdumps_scraper.rendering.render_statement_filters(JSON_SPEC_STATEMENTS_NONE)
+        wdumps_scraper.rendering.render_statement_filters(
+            JSON_SPEC_STATEMENTS_NONE, json_labels
+        )
         == ""
     )
 
 
-def test_render_entity_filters_items_all() -> None:
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_entity_filters_items_all(json_labels) -> None:
     assert (
-        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_ITEMS_ALL)
+        wdumps_scraper.rendering.render_entity_filters(
+            JSON_SPEC_ENTITIES_ITEMS_ALL, json_labels
+        )
         == "Items where any property has any value (all)"
     )
 
 
-def test_render_entity_filters_empty() -> None:
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_entity_filters_empty(json_labels) -> None:
     assert (
-        wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_EMPTY) == ""
+        wdumps_scraper.rendering.render_entity_filters(
+            JSON_SPEC_ENTITIES_EMPTY, json_labels
+        )
+        == ""
     )
 
 
-def test_render_entity_filters_none() -> None:
-    assert wdumps_scraper.rendering.render_entity_filters(JSON_SPEC_ENTITIES_NONE) == ""
+@pytest.mark.parametrize("json_labels", [JSON_NO_LABELS, JSON_LABELS_MULTIPLE_EXIST])
+def test_render_entity_filters_none(json_labels) -> None:
+    assert (
+        wdumps_scraper.rendering.render_entity_filters(
+            JSON_SPEC_ENTITIES_NONE, json_labels
+        )
+        == ""
+    )
 
 
-def test_render_entity_filters_multiple_values() -> None:
+def test_render_entity_filters_multiple_values_no_labels() -> None:
     assert wdumps_scraper.rendering.render_entity_filters(
-        JSON_SPEC_ENTITIES_MULTIPLE_VALUES
+        JSON_SPEC_ENTITIES_MULTIPLE_VALUES, JSON_NO_LABELS
     ) == (
         "Items where P31 has any entity value (best rank), "
-        "P31 is 'wd:Q901' (non deprecated)"
+        "P279 is 'wd:Q901' (non deprecated)"
     )
 
 
-def test_render_entity_filters_multiple_types() -> None:
+def test_render_entity_filters_multiple_values_single_label() -> None:
     assert wdumps_scraper.rendering.render_entity_filters(
-        JSON_SPEC_ENTITIES_MULTIPLE_TYPES
+        JSON_SPEC_ENTITIES_MULTIPLE_VALUES, JSON_LABELS_SINGLE_EXIST
     ) == (
-        "Items where P31 is Q5 (best rank)\n"
+        "Items where instance of (P31) has any entity value (best rank), "
+        "P279 is 'wd:Q901' (non deprecated)"
+    )
+
+
+def test_render_entity_filters_multiple_types_multiple_labels() -> None:
+    assert wdumps_scraper.rendering.render_entity_filters(
+        JSON_SPEC_ENTITIES_MULTIPLE_TYPES, JSON_LABELS_MULTIPLE_EXIST
+    ) == (
+        "Items where instance of (P31) is Uranus (Q106) (best rank)\n"
         "Properties where 'schema:isPartOf' has any value (non deprecated)"
     )
